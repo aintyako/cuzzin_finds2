@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController; // <--- Added this
 use App\Http\Controllers\Admin\ProductController;
 use App\Models\Category;
 use App\Models\Product;
@@ -36,6 +37,17 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::get('/add-to-cart/{id}', [CartController::class, 'add'])->name('cart.add');
 Route::post('/remove-from-cart/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
+/*
+|--------------------------------------------------------------------------
+| Checkout Management Routes (New)
+|--------------------------------------------------------------------------
+*/
+
+// The page where they see the checkout form
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+
+// The action when they click "Place My Order"
+Route::post('/checkout/place', [CheckoutController::class, 'placeOrder'])->name('order.place');
 
 /*
 |--------------------------------------------------------------------------

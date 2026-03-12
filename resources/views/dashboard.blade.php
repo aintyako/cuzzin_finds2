@@ -1,64 +1,58 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin Dashboard 👑') }}
+        <h2 class="font-semibold text-xl text-white leading-tight">
+            {{ __('Admin Dashboard') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-gray-50 min-h-screen">
+    <div class="py-12 bg-[#0f172a] min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             @if (session('success'))
-                <div class="bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-xl shadow-sm flex items-center gap-3">
+                <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-4 rounded-xl shadow-sm flex items-center gap-3">
                     <span class="text-xl">✅</span>
                     <span class="font-medium">{{ session('success') }}</span>
                 </div>
             @endif
 
-            {{-- 
-                SIDE-BY-SIDE GRID 
-            --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
 
                 {{-- CHART SECTION --}}
-                <div class="bg-white shadow-sm sm:rounded-xl p-6 border border-gray-100 flex flex-col">
+                <div class="bg-[#1e293b] shadow-2xl sm:rounded-3xl p-8 border border-gray-800 flex flex-col">
                     <div class="mb-6">
-                        {{-- Updated Header Logic --}}
-                        <h3 class="text-xl font-bold text-gray-900">Total Stock Overview</h3>
-                        <p class="text-sm text-gray-500">Total individual items (images) available per category</p>
+                        <h3 class="text-xl font-black text-white italic tracking-tight">Total Stock Overview</h3>
+                        <p class="text-sm text-gray-400 font-medium">Total individual items available per category</p>
                     </div>
 
                     <div id="categoryChart" class="w-full mt-auto"></div>
                 </div>
 
                 {{-- RECENT ACTIVITY LOGS SECTION --}}
-                <div class="bg-white shadow-sm sm:rounded-xl p-6 border border-gray-100 flex flex-col">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Recent Activity Logs 📝</h3>
+                <div class="bg-[#1e293b] shadow-2xl sm:rounded-3xl p-8 border border-gray-800 flex flex-col">
+                    <h3 class="text-xl font-black text-white italic tracking-tight mb-6">Recent Activity Logs 📝</h3>
                     
-                    {{-- 
-                        FIXED HEIGHT SCROLL CONTAINER 
-                        max-h-[420px] matches the standard height of the ApexChart + Header 
-                    --}}
                     <div class="overflow-y-auto pr-2 custom-scrollbar" style="max-height: 420px;">
                         @if(isset($recentProducts) && $recentProducts->count() > 0)
-                            <ul class="divide-y divide-gray-100">
+                            <ul class="divide-y divide-gray-800">
                                 @foreach($recentProducts as $logProduct)
-                                    <li class="py-4 flex justify-between items-center hover:bg-gray-50 transition rounded-lg px-2">
+                                    <li class="py-4 flex justify-between items-center hover:bg-white/5 transition rounded-xl px-3 group">
                                         <div class="flex items-center gap-4">
-                                            <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-lg shadow-sm">
+                                            <div class="w-12 h-12 rounded-xl bg-[#0f172a] border border-gray-700 flex items-center justify-center text-lg shadow-inner group-hover:border-indigo-500 transition">
                                                 🛍️
                                             </div>
                                             <div>
-                                                <p class="text-sm text-gray-900 leading-tight">
-                                                    <span class="font-bold">{{ $logProduct->name }}</span> added to <span class="font-semibold text-indigo-600">{{ $logProduct->category->name ?? 'Uncategorized' }}</span>.
+                                                <p class="text-sm text-gray-300 leading-tight">
+                                                    <span class="font-black text-white">{{ $logProduct->name }}</span> 
+                                                    <span class="text-gray-500 font-medium">added to</span> 
+                                                    <span class="font-black text-indigo-400">{{ $logProduct->category->name ?? 'Uncategorized' }}</span>
                                                 </p>
-                                                <p class="text-xs text-gray-500 mt-1">
+                                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
                                                     {{ $logProduct->created_at->diffForHumans() }}
                                                 </p>
                                             </div>
                                         </div>
                                         <div class="flex-shrink-0">
-                                            <span class="text-[10px] font-black px-2 py-1 bg-gray-100 text-gray-600 rounded-full tracking-widest">
+                                            <span class="text-[10px] font-black px-3 py-1.5 bg-[#0f172a] text-indigo-400 border border-indigo-500/30 rounded-full tracking-widest">
                                                 ₱{{ number_format($logProduct->price, 2) }}
                                             </span>
                                         </div>
@@ -66,7 +60,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <div class="py-20 text-center text-gray-400 italic">
+                            <div class="py-20 text-center text-gray-500 italic font-medium">
                                 No products added yet! 
                             </div>
                         @endif
@@ -82,15 +76,15 @@
             width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #0f172a;
             border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
+            background: #334155;
             border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
+            background: #4f46e5;
         }
     </style>
 
@@ -106,44 +100,48 @@
                     type: 'bar',
                     height: 350,
                     toolbar: { show: false },
-                    fontFamily: 'inherit'
+                    fontFamily: 'inherit',
+                    foreColor: '#94a3b8' // Slate 400 for axis labels
                 },
-                colors: ['#ec4899', '#4f46e5', '#eab308', '#06b6d4'], 
+                grid: {
+                    borderColor: '#334155', // Slate 700 for grid lines
+                    strokeDashArray: 4,
+                },
+                colors: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b'], 
                 plotOptions: {
                     bar: {
-                        borderRadius: 6,
+                        borderRadius: 10,
                         horizontal: false,
                         distributed: true,
-                        columnWidth: '35%'
+                        columnWidth: '40%'
                     }
                 },
                 dataLabels: { 
                     enabled: true,
-                    formatter: function (val) {
-                        return val;
-                    },
                     offsetY: -20,
                     style: {
                         fontSize: '12px',
-                        colors: ["#304758"]
+                        fontWeight: '900',
+                        colors: ["#ffffff"]
                     }
                 },
                 xaxis: { 
                     categories: labels,
-                    position: 'bottom',
                     axisBorder: { show: false },
                     axisTicks: { show: false },
                 },
                 yaxis: {
-                    axisBorder: { show: false },
-                    axisTicks: { show: false },
-                    labels: { show: true },
+                    labels: {
+                        style: { fontWeight: '600' }
+                    },
                     title: {
-                        text: 'Total Individual Items',
+                        text: 'Total Items',
+                        style: { color: '#6366f1', fontWeight: '900' }
                     }
                 },
                 legend: { show: false },
                 tooltip: {
+                    theme: 'dark',
                     y: {
                         formatter: function (val) {
                             return val + " items";
