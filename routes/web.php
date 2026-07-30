@@ -3,8 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController; // <--- Added this
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\DashboardController; // <--- Imported DashboardController
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
@@ -55,25 +56,10 @@ Route::post('/checkout/place', [CheckoutController::class, 'placeOrder'])->name(
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
-    // 1. Chart Data: Get categories and the sum of images (stock) for all products in that category
-    $categories = Category::with(['products' => function($query) {
-        $query->withCount('images');
-    }])->get();
-
-    // Labels for the X-axis
-    $chartLabels = $categories->pluck('name'); 
-    
-    // Data for the Y-axis: Sum up the 'images_count' for every product in this category
-    $chartData = $categories->map(function ($category) {
-        return $category->products->sum('images_count');
-    });
-
-    // 2. LOGS: Fetch the 5 most recently added products
-    $recentProducts = Product::with('category')->latest()->take(5)->get();
-
-    return view('dashboard', compact('chartLabels', 'chartData', 'recentProducts'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Updated: Route now uses DashboardController to handle dynamic chart data & analytics
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

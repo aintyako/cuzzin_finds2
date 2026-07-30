@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white leading-tight">
-            {{ __('Upload New Item ') }}
+            {{ __('Upload New Item') }}
         </h2>
     </x-slot>
 
@@ -15,27 +15,46 @@
                     {{-- Product Name --}}
                     <div>
                         <label class="block text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2 ml-1">Product Name</label>
-                        <input type="text" name="name" required placeholder="e.g. Snatched Cargo Pants" 
+                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Snatched Cargo Pants" 
                                class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 placeholder-gray-600 outline-none">
+                        @error('name')
+                            <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {{-- Category --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {{-- Category Dropdown (Clothes & Skincare) --}}
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2 ml-1">Category</label>
-                            <select name="category_id" required 
-                                    class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 outline-none appearance-none">
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
+                            <select name="category" required 
+                                    class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 outline-none appearance-none cursor-pointer">
+                                <option value="" disabled {{ old('category') ? '' : 'selected' }}>Select category</option>
+                                <option value="Clothes" {{ old('category') == 'Clothes' ? 'selected' : '' }}>Clothes</option>
+                                <option value="Skincare" {{ old('category') == 'Skincare' ? 'selected' : '' }}>Skincare</option>
                             </select>
+                            @error('category')
+                                <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         {{-- Price --}}
                         <div>
                             <label class="block text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2 ml-1">Price (₱)</label>
-                            <input type="number" step="0.01" name="price" required placeholder="0.00" 
+                            <input type="number" step="0.01" min="0" name="price" value="{{ old('price') }}" required placeholder="0.00" 
                                    class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 placeholder-gray-600 outline-none">
+                            @error('price')
+                                <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Quantity / Stock --}}
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2 ml-1">Stock Quantity</label>
+                            <input type="number" min="0" name="quantity" value="{{ old('quantity', 0) }}" required placeholder="0" 
+                                   class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 placeholder-gray-600 outline-none">
+                            @error('quantity')
+                                <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -43,7 +62,10 @@
                     <div>
                         <label class="block text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2 ml-1">Description</label>
                         <textarea name="description" rows="4" required placeholder="Tell them why they need this..." 
-                                  class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 placeholder-gray-600 outline-none"></textarea>
+                                  class="block w-full bg-[#0f172a] border-gray-700 text-white rounded-2xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm px-5 py-3.5 placeholder-gray-600 outline-none">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Image Upload --}}
@@ -52,12 +74,18 @@
                         <input type="file" name="images[]" accept="image/*" multiple required
                                class="block w-full text-xs text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 transition cursor-pointer">
                         <p class="mt-4 text-[10px] text-gray-500 font-medium">✨ Tip: Hold down <span class="text-gray-300 font-bold">Ctrl/Cmd</span> to upload multiple colors/angles.</p>
+                        @error('images')
+                            <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                        @enderror
+                        @error('images.*')
+                            <p class="text-rose-400 text-xs mt-1 ml-1 font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Trending Checkbox --}}
                     <div class="flex items-center p-4 bg-[#0f172a] rounded-2xl border border-gray-700">
-                        <input type="checkbox" name="is_trending" value="1" class="w-5 h-5 rounded border-gray-700 bg-transparent text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
-                        <label class="ml-4 block text-xs text-gray-300 font-black uppercase tracking-widest">Mark as Trending 🔥</label>
+                        <input type="checkbox" id="is_trending" name="is_trending" value="1" {{ old('is_trending') ? 'checked' : '' }} class="w-5 h-5 rounded border-gray-700 bg-transparent text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0">
+                        <label for="is_trending" class="ml-4 block text-xs text-gray-300 font-black uppercase tracking-widest cursor-pointer">Mark as Trending 🔥</label>
                     </div>
 
                     {{-- Submit Button --}}

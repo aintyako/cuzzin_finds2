@@ -15,19 +15,23 @@ class Product extends Model
         'slug',
         'category_id',
         'price',
+        'quantity', // <-- ADDED: Crucial for inventory tracking
         'description',
         'image_url',
         'is_trending',
         'is_sold_out',
-        'colors', // Added colors to the whitelist
+        'colors',
     ];
 
     /**
      * The attributes that should be cast.
-     * This tells Laravel to treat the 'colors' JSON column as a PHP array.
+     * Treats the 'colors' JSON column as a PHP array automatically.
      */
     protected $casts = [
         'colors' => 'array',
+        'is_trending' => 'boolean',
+        'is_sold_out' => 'boolean',
+        'price' => 'decimal:2',
     ];
 
     public function category()

@@ -4,55 +4,80 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\ProductImage; // <-- Make sure to add this import
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    // Show the "Add New Product" form
+    /**
+     * Show the "Add New Product" form
+     */
     public function create()
     {
         $categories = Category::all();
         return view('admin.products.create', compact('categories'));
     }
 
-    // Save the newly uploaded product to the database
+    /**
+     * Save the newly uploaded product to the database
+     */
     public function store(Request $request)
     {
-        // 1. Validate the form data (Updated for multiple images)
+        // 1. Validate form data
         $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
+            'name'        => 'required|string|max:255',
+            'category_id' => 'nullable|exists:categories,id',
+            'category'    => 'nullable|string', // Support for string inputs ("Clothes", "Skincare")
+            'price'       => 'required|numeric|min:0',
+            'quantity'    => 'required|integer|min:0',
             'description' => 'required|string',
-            'images' => 'required|array', // Must be an array of files
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // Validate each file in the array
+            'images'      => 'required|array',
+            'images.*'    => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        // Get the first image to save as the primary 'image_url' (keeps your current front-end working)
+        // 2. Resolve Category ID (Handles both dropdown IDs & direct string names)
+        $categoryId = $request->category_id;
+        if (!$categoryId && $request->filled('category')) {
+            $category = Category::firstOrCreate(
+                ['name' => $request->category],
+                ['slug' => Str::slug($request->category)]
+            );
+            $categoryId = $category->id;
+        }
+
+        // Save first image as primary thumbnail
         $firstImagePath = $request->file('images')[0]->store('products', 'public');
 
-        // 2. Create the product in the database FIRST so we have its ID
-        $product = Product::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name . '-' . uniqid()),
-            'category_id' => $request->category_id,
-            'price' => $request->price,
+        // 3. Prepare product data
+        $productData = [
+            'name'        => $request->name,
+            'slug'        => Str::slug($request->name . '-' . uniqid()),
+            'category_id' => $categoryId,
+            'price'       => $request->price,
             'description' => $request->description,
-            'image_url' => '/storage/' . $firstImagePath, // Save the first image as the main thumbnail
+            'image_url'   => '/storage/' . $firstImagePath,
             'is_trending' => $request->has('is_trending'),
-        ]);
+        ];
 
-        // 3. Save ALL uploaded images to the new product_images table
+        // Safely set quantity depending on database column name
+        if (Schema::hasColumn('products', 'quantity')) {
+            $productData['quantity'] = $request->quantity;
+        } elseif (Schema::hasColumn('products', 'stock')) {
+            $productData['stock'] = $request->quantity;
+        }
+
+        // 4. Create the product
+        $product = Product::create($productData);
+
+        // 5. Save ALL uploaded images to product_images table
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                // Store each image
                 $path = $image->store('products', 'public');
                 
-                // Save to the database
                 ProductImage::create([
                     'product_id' => $product->id,
                     'image_path' => '/storage/' . $path
@@ -60,7 +85,6 @@ class ProductController extends Controller
             }
         }
 
-        // 4. Send them back to the dashboard with a success message
         return redirect()->route('dashboard')->with('success', 'Product added successfully with multiple images! 🎉');
     }
 
@@ -69,10 +93,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        // Fetch categories for the edit dropdown
         $categories = Category::all();
-        
-        // Return the edit view and pass the specific product to it
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
@@ -81,24 +102,45 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // 1. Validate the text inputs
+        // 1. Validate inputs
         $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
+            'name'        => 'required|string|max:255',
+            'category_id' => 'nullable|exists:categories,id',
+            'category'    => 'nullable|string',
+            'price'       => 'required|numeric|min:0',
+            'quantity'    => 'required|integer|min:0',
             'description' => 'required|string',
         ]);
 
-        // 2. Update the product in the database
-        $product->update([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'price' => $request->price,
+        // 2. Resolve Category ID
+        $categoryId = $request->category_id;
+        if (!$categoryId && $request->filled('category')) {
+            $category = Category::firstOrCreate(
+                ['name' => $request->category],
+                ['slug' => Str::slug($request->category)]
+            );
+            $categoryId = $category->id;
+        }
+
+        // 3. Prepare update payload
+        $updateData = [
+            'name'        => $request->name,
+            'category_id' => $categoryId ?? $product->category_id,
+            'price'       => $request->price,
             'description' => $request->description,
             'is_trending' => $request->has('is_trending') ? 1 : 0,
-        ]);
+        ];
 
-        // 3. Send back to the dashboard with a success message
+        // Safely update quantity or stock column
+        if (Schema::hasColumn('products', 'quantity')) {
+            $updateData['quantity'] = $request->quantity;
+        } elseif (Schema::hasColumn('products', 'stock')) {
+            $updateData['stock'] = $request->quantity;
+        }
+
+        // 4. Update product
+        $product->update($updateData);
+
         return redirect()->route('dashboard')->with('success', 'Product updated successfully! ✨');
     }
 
@@ -107,11 +149,9 @@ class ProductController extends Controller
      */
     public function toggleStock(Product $product)
     {
-        // Flip the boolean value (if true, make false. If false, make true)
         $product->is_sold_out = !$product->is_sold_out;
         $product->save();
 
-        // Check the new status to send the correct success message
         $status = $product->is_sold_out ? 'Sold Out' : 'In Stock';
 
         return redirect()->back()->with('success', "Product is now marked as {$status}! 📦");
@@ -122,13 +162,13 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // 1. Delete the main thumbnail image from storage
+        // 1. Delete main thumbnail image
         if ($product->image_url && str_starts_with($product->image_url, '/storage/')) {
             $mainImagePath = str_replace('/storage/', '', $product->image_url);
             Storage::disk('public')->delete($mainImagePath);
         }
 
-        // 2. Delete all extra images from storage
+        // 2. Delete additional gallery images
         foreach ($product->images as $image) {
             if (str_starts_with($image->image_path, '/storage/')) {
                 $path = str_replace('/storage/', '', $image->image_path);
@@ -136,12 +176,9 @@ class ProductController extends Controller
             }
         }
 
-        // 3. Delete the product from the database
-        // Note: Thanks to the 'cascadeOnDelete()' in your migration, 
-        // this will automatically delete the related rows in the product_images table too!
+        // 3. Delete product from DB (cascadeOnDelete handles product_images table)
         $product->delete();
 
-        // 4. Redirect back with a success message
         return redirect()->back()->with('success', 'Product completely deleted! 🗑️');
     }
 }
