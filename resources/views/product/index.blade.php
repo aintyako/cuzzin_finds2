@@ -76,6 +76,14 @@
                                             @endif
                                         </button>
                                     </form>
+
+                                    <form id="delete-form-{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="m-0" style="display: none;">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                    <button onclick="confirmProductDelete({{ $product->id }})" class="bg-red-600 hover:bg-red-500 text-white p-2.5 rounded-xl shadow-xl flex items-center justify-center transition active:scale-90">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
                                 </div>
                             @endif
 
@@ -96,10 +104,13 @@
                                 {{ $product->name }}
                             </h4>
                             
-                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800 gap-2">
                                 <span class="text-lg font-black text-white">
                                     ₱{{ number_format($product->price, 2) }}
                                 </span>
+                                <a href="{{ route('wishlist.toggle', $product->id) }}" class="inline-flex items-center justify-center rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-rose-400 hover:bg-rose-500/20 transition" title="Add to wishlist">
+                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21s-6.6-4.35-8.7-8.2C1.3 9.2 2.4 5.7 5.7 4.9c1.5-.3 3 .1 4.3 1.1 1.3-1 2.8-1.4 4.3-1.1 3.3.8 4.4 4.3 2.4 7.9C18.6 16.7 12 21 12 21z"></path></svg>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -115,4 +126,32 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmProductDelete(productId, isDashboard = false) {
+            Swal.fire({
+                title: 'Delete Product?',
+                text: 'This action cannot be undone! 🗑️',
+                icon: 'warning',
+                background: '#1e293b',
+                color: '#f3f4f6',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'rounded-3xl border border-gray-700 shadow-2xl',
+                    confirmButton: 'rounded-xl font-bold uppercase tracking-widest text-xs px-6 py-3',
+                    cancelButton: 'rounded-xl font-bold uppercase tracking-widest text-xs px-6 py-3'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formId = isDashboard ? `delete-dashboard-${productId}` : `delete-form-${productId}`;
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
+    </script>
 </x-app-layout>

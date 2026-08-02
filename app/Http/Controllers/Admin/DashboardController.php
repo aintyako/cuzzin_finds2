@@ -33,13 +33,22 @@ class DashboardController extends Controller
 
         // 2. TOTAL REVENUE & CONVERSION
         $totalRevenue = 0;
+        $totalOrders = 0;
         if (class_exists('App\Models\Order') && Schema::hasTable('orders')) {
             $totalRevenue = Order::sum('total_amount') ?? 0;
+            $totalOrders = Order::count();
         }
 
-        $revenueGrowth = 13;
-        $conversionRate = 26;
-        $conversionGrowth = 8;
+        // Calculate conversion rate: (Orders / Total Products) * 100
+        // This shows what percentage of your catalog has been ordered
+        $conversionRate = $totalProducts > 0 ? round(($totalOrders / $totalProducts) * 100, 1) : 0;
+        
+        // Previous period growth (simplified: compare orders from last 7 days vs previous 7 days)
+        $ordersLast7Days = Order::whereBetween('created_at', [now()->subDays(7), now()])->count();
+        $ordersPrevious7Days = Order::whereBetween('created_at', [now()->subDays(14), now()->subDays(7)])->count();
+        $conversionGrowth = $ordersPrevious7Days > 0 ? round((($ordersLast7Days - $ordersPrevious7Days) / $ordersPrevious7Days) * 100, 1) : 0;
+        
+        $revenueGrowth = 13; // Keep as placeholder for now
 
         // 3. RECENT ACTIVITY LOGS
         $recentProducts = Product::with('category')

@@ -33,8 +33,17 @@
                         {{ __('Skincare') }}
                     </x-nav-link>
 
-                    {{-- Cart --}}
+                    {{-- Cart & Wishlist --}}
                     @if(!Auth::check() || Auth::user()->email !== 'admin@example.com')
+                        <x-nav-link :href="route('wishlist.index')" :active="request()->routeIs('wishlist.index')" class="text-gray-300 hover:text-white border-indigo-500">
+                            {{ __('Wishlist') }} ❤️
+                            @if(session('wishlist') && count(session('wishlist')) > 0)
+                                <span class="ms-1 px-2 py-0.5 text-[10px] bg-rose-600 text-white rounded-full font-black">
+                                    {{ count(session('wishlist')) }}
+                                </span>
+                            @endif
+                        </x-nav-link>
+
                         <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')" class="text-gray-300 hover:text-white border-indigo-500">
                             {{ __('Cart') }} 🛒
                             @if(session('cart') && count(session('cart')) > 0)
@@ -113,6 +122,10 @@
             </x-responsive-nav-link>
 
             @if(!Auth::check() || Auth::user()->email !== 'admin@example.com')
+                <x-responsive-nav-link :href="route('wishlist.index')" :active="request()->routeIs('wishlist.index')" class="text-gray-300">
+                    {{ __('Wishlist') }} ❤️
+                </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')" class="text-gray-300">
                     {{ __('Cart') }} 🛒
                 </x-responsive-nav-link>

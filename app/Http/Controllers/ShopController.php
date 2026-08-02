@@ -26,8 +26,9 @@ class ShopController extends Controller
         $query = Product::with('category');
 
         if ($request->filled('category')) {
-            $query->whereHas('category', function($q) use ($request) {
-                $q->where('slug', $request->category);
+            $requestedSlug = Category::normalizeSlug($request->category);
+            $query->whereHas('category', function($q) use ($requestedSlug) {
+                $q->where('slug', $requestedSlug);
             });
         }
 
@@ -54,12 +55,12 @@ class ShopController extends Controller
     {
         // 1. Get ONLY products in the 'clothes' category for the main section
         $products = Product::whereHas('category', function($q) {
-            $q->where('slug', 'clothes');
+            $q->whereIn('slug', ['clothes', 'clotes']);
         })->latest()->paginate(12);
 
         // 2. FIX: Get the latest 4 arrivals specifically for CLOTHES only
         $latestProducts = Product::whereHas('category', function($q) {
-            $q->where('slug', 'clothes');
+            $q->whereIn('slug', ['clothes', 'clotes']);
         })->with('category')->latest()->take(4)->get();
 
         // 3. Pass categories in case the layout or filters need them
@@ -76,12 +77,12 @@ class ShopController extends Controller
     {
         // 1. FIX: Changed 'skincare' to 'beauty' to perfectly match your database category
         $products = Product::whereHas('category', function($q) {
-            $q->where('slug', 'beauty'); 
+            $q->whereIn('slug', ['beauty', 'skincare']);
         })->latest()->paginate(12);
 
         // 2. FIX: Get the latest 4 arrivals specifically for BEAUTY only
         $latestProducts = Product::whereHas('category', function($q) {
-            $q->where('slug', 'beauty');
+            $q->whereIn('slug', ['beauty', 'skincare']);
         })->with('category')->latest()->take(4)->get();
 
         // 3. Pass categories in case the layout or filters need them

@@ -42,9 +42,10 @@ class ProductController extends Controller
         // 2. Resolve Category ID (Handles both dropdown IDs & direct string names)
         $categoryId = $request->category_id;
         if (!$categoryId && $request->filled('category')) {
+            $categoryName = $request->category;
             $category = Category::firstOrCreate(
-                ['name' => $request->category],
-                ['slug' => Str::slug($request->category)]
+                ['name' => $categoryName],
+                ['slug' => Category::normalizeSlug($categoryName)]
             );
             $categoryId = $category->id;
         }
@@ -115,9 +116,10 @@ class ProductController extends Controller
         // 2. Resolve Category ID
         $categoryId = $request->category_id;
         if (!$categoryId && $request->filled('category')) {
+            $categoryName = $request->category;
             $category = Category::firstOrCreate(
-                ['name' => $request->category],
-                ['slug' => Str::slug($request->category)]
+                ['name' => $categoryName],
+                ['slug' => Category::normalizeSlug($categoryName)]
             );
             $categoryId = $category->id;
         }

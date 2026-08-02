@@ -69,7 +69,7 @@
                                         {{ $product->name }}
                                     </h4>
                                     
-                                    <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                                    <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800 gap-2">
                                         <span class="text-lg font-black text-white">
                                             ₱{{ number_format($product->price, 2) }}
                                         </span>
@@ -77,9 +77,14 @@
                                         @if(isset($product->is_sold_out) && $product->is_sold_out)
                                             <span class="bg-gray-800 text-gray-500 font-black text-xs px-3 py-2 rounded-lg tracking-widest uppercase">Sold Out</span>
                                         @else
-                                            <a href="{{ route('cart.add', $product->id) }}" class="bg-indigo-600 hover:bg-white hover:text-indigo-600 text-white p-2 rounded-lg transition-all shadow-md active:scale-95">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                            </a>
+                                            <div class="flex items-center gap-2">
+                                                <a href="{{ route('wishlist.toggle', $product->id) }}" class="inline-flex items-center justify-center rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-rose-400 hover:bg-rose-500/20 transition" title="Add to wishlist">
+                                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21s-6.6-4.35-8.7-8.2C1.3 9.2 2.4 5.7 5.7 4.9c1.5-.3 3 .1 4.3 1.1 1.3-1 2.8-1.4 4.3-1.1 3.3.8 4.4 4.3 2.4 7.9C18.6 16.7 12 21 12 21z"></path></svg>
+                                                </a>
+                                                <a href="{{ route('cart.add', $product->id) }}" class="bg-indigo-600 hover:bg-white hover:text-indigo-600 text-white p-2 rounded-lg transition-all shadow-md active:scale-95">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                                </a>
+                                            </div>
                                         @endif
                                     </div>
                                 </div>
@@ -131,7 +136,7 @@
                                     {{ $product->name }}
                                 </h4>
                                 
-                                <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+                                <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800 gap-2">
                                     <span class="text-lg font-black text-white">
                                         ₱{{ number_format($product->price, 2) }}
                                     </span>
@@ -139,9 +144,14 @@
                                     @if(isset($product->is_sold_out) && $product->is_sold_out)
                                         <span class="bg-gray-800 text-gray-500 font-black text-xs px-3 py-2 rounded-lg tracking-widest uppercase">Sold Out</span>
                                     @else
-                                        <a href="{{ route('cart.add', $product->id) }}" class="bg-indigo-600 hover:bg-white hover:text-indigo-600 text-white p-2 rounded-lg transition-all shadow-md active:scale-95">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                                        </a>
+                                        <div class="flex items-center gap-2">
+                                            <a href="{{ route('wishlist.toggle', $product->id) }}" class="inline-flex items-center justify-center rounded-lg border border-rose-500/30 bg-rose-500/10 p-2 text-rose-400 hover:bg-rose-500/20 transition" title="Add to wishlist">
+                                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21s-6.6-4.35-8.7-8.2C1.3 9.2 2.4 5.7 5.7 4.9c1.5-.3 3 .1 4.3 1.1 1.3-1 2.8-1.4 4.3-1.1 3.3.8 4.4 4.3 2.4 7.9C18.6 16.7 12 21 12 21z"></path></svg>
+                                            </a>
+                                            <a href="{{ route('cart.add', $product->id) }}" class="bg-indigo-600 hover:bg-white hover:text-indigo-600 text-white p-2 rounded-lg transition-all shadow-md active:scale-95">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                            </a>
+                                        </div>
                                     @endif
                                 </div>
                             </div>

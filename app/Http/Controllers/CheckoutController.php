@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
@@ -40,12 +41,30 @@ class CheckoutController extends Controller
             'phone' => 'required|string',
         ]);
 
-        // 2. Logic to save to database would go here (Order::create...)
+        // 2. Calculate cart total
+        $cart = session()->get('cart', []);
+        $total = 0;
+        foreach($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        // 3. Save order to database
+        Order::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'email' => $request->email,
+            'address' => $request->address,
+            'city' => $request->city,
+            'phone' => $request->phone,
+            'total_amount' => $total,
+            'status' => 'completed',
+            'items_json' => json_encode($cart),
+        ]);
         
-        // 3. Clear the cart session after successful order
+        // 4. Clear the cart session after successful order
         session()->forget('cart');
 
-        // 4. Redirect to a success page or dashboard
+        // 5. Redirect to a success page or dashboard
         return redirect()->route('dashboard')->with('success', 'Order placed successfully! 🛍️');
     }
 }
