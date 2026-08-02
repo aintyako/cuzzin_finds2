@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -49,8 +50,10 @@ class CheckoutController extends Controller
         }
 
         // 3. Save order to database
+        $userId = Auth::check() ? Auth::id() : null;
+        
         Order::create([
-            'user_id' => auth()->id(),
+            'user_id' => $userId,
             'name' => $request->name,
             'email' => $request->email,
             'address' => $request->address,

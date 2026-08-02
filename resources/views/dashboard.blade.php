@@ -141,6 +141,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-800">
                                     @forelse($recentProducts ?? [] as $product)
+                                        @if($product)
                                         <tr class="hover:bg-slate-800/40 transition">
                                             <td class="py-3 px-3 font-semibold text-white">
                                                 {{ $product->name ?? 'Unnamed Product' }}
@@ -181,6 +182,7 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        @endif
                                     @empty
                                         <tr>
                                             <td colspan="4" class="py-6 text-center text-gray-500">
