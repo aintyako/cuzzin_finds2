@@ -74,7 +74,7 @@
                                             ₱{{ number_format($product->price, 2) }}
                                         </span>
 
-                                        @if(isset($product->is_sold_out) && $product->is_sold_out)
+                                        @if($product->sold_out)
                                             <span class="bg-gray-800 text-gray-500 font-black text-xs px-3 py-2 rounded-lg tracking-widest uppercase">Sold Out</span>
                                         @else
                                             <div class="flex items-center gap-2">
@@ -141,7 +141,7 @@
                                         ₱{{ number_format($product->price, 2) }}
                                     </span>
 
-                                    @if(isset($product->is_sold_out) && $product->is_sold_out)
+                                    @if($product->sold_out)
                                         <span class="bg-gray-800 text-gray-500 font-black text-xs px-3 py-2 rounded-lg tracking-widest uppercase">Sold Out</span>
                                     @else
                                         <div class="flex items-center gap-2">

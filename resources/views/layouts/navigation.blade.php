@@ -76,6 +76,10 @@
                                     {{ __('Profile') }}
                                 </x-dropdown-link>
 
+                                <x-dropdown-link :href="route('orders.index')" class="text-gray-300 hover:bg-indigo-600 hover:text-white">
+                                    {{ __('My Orders') }}
+                                </x-dropdown-link>
+
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link :href="route('logout')"
@@ -142,6 +146,10 @@
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('profile.edit')" class="text-gray-400">
                         {{ __('Profile') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('orders.index')" class="text-gray-400">
+                        {{ __('My Orders') }}
                     </x-responsive-nav-link>
 
                     <form method="POST" action="{{ route('logout') }}">

@@ -100,9 +100,14 @@
                             <p class="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-1">
                                 {{ $product->category->name }}
                             </p>
-                            <h4 class="text-sm font-bold text-gray-200 leading-snug mb-4 flex-grow">
-                                {{ $product->name }}
-                            </h4>
+                            <div class="flex items-start justify-between gap-3 mb-4">
+                                <h4 class="text-sm font-bold text-gray-200 leading-snug flex-1">
+                                    {{ $product->name }}
+                                </h4>
+                                @if($product->sold_out)
+                                    <span class="bg-gray-800 text-gray-400 text-[10px] uppercase tracking-[0.2em] font-black px-3 py-1 rounded-full">Sold Out</span>
+                                @endif
+                            </div>
                             
                             <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800 gap-2">
                                 <span class="text-lg font-black text-white">

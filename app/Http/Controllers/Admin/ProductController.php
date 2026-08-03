@@ -54,6 +54,7 @@ class ProductController extends Controller
         $firstImagePath = $request->file('images')[0]->store('products', 'public');
 
         // 3. Prepare product data
+        $inventoryValue = $request->quantity;
         $productData = [
             'name'        => $request->name,
             'slug'        => Str::slug($request->name . '-' . uniqid()),
@@ -62,13 +63,14 @@ class ProductController extends Controller
             'description' => $request->description,
             'image_url'   => '/storage/' . $firstImagePath,
             'is_trending' => $request->has('is_trending'),
+            'is_sold_out' => $inventoryValue <= 0,
         ];
 
         // Safely set quantity depending on database column name
         if (Schema::hasColumn('products', 'quantity')) {
-            $productData['quantity'] = $request->quantity;
+            $productData['quantity'] = $inventoryValue;
         } elseif (Schema::hasColumn('products', 'stock')) {
-            $productData['stock'] = $request->quantity;
+            $productData['stock'] = $inventoryValue;
         }
 
         // 4. Create the product
@@ -125,19 +127,21 @@ class ProductController extends Controller
         }
 
         // 3. Prepare update payload
+        $inventoryValue = $request->quantity;
         $updateData = [
             'name'        => $request->name,
             'category_id' => $categoryId ?? $product->category_id,
             'price'       => $request->price,
             'description' => $request->description,
             'is_trending' => $request->has('is_trending') ? 1 : 0,
+            'is_sold_out' => $inventoryValue <= 0,
         ];
 
         // Safely update quantity or stock column
         if (Schema::hasColumn('products', 'quantity')) {
-            $updateData['quantity'] = $request->quantity;
+            $updateData['quantity'] = $inventoryValue;
         } elseif (Schema::hasColumn('products', 'stock')) {
-            $updateData['stock'] = $request->quantity;
+            $updateData['stock'] = $inventoryValue;
         }
 
         // 4. Update product

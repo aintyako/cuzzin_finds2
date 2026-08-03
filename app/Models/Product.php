@@ -44,4 +44,11 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
+
+    public function getSoldOutAttribute()
+    {
+        $quantity = $this->quantity ?? $this->stock ?? null;
+
+        return $this->is_sold_out || ($quantity !== null && $quantity <= 0);
+    }
 }

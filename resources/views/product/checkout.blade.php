@@ -1,186 +1,224 @@
 <x-app-layout>
-    {{-- Main Container - Now with a deep dark background --}}
     <div class="bg-[#0f172a] text-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto px-6 py-16">
             <div class="mb-10">
-                <h2 class="text-3xl font-black text-white tracking-tight italic">Finalize Order 💳</h2>
-                <p class="text-gray-400 font-medium mt-2">Complete your details to finish the purchase.</p>
+                <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">Checkout</h2>
+                <p class="text-gray-400 mt-2 max-w-2xl">Enter your shipping details, choose a payment option, and review your order before confirming.</p>
             </div>
 
-            <form action="{{ route('order.place') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                @csrf
-                
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <div class="lg:col-span-7 space-y-8">
-                    {{-- Shipping Information Card --}}
-                    <div class="bg-[#1e293b] p-8 rounded-3xl shadow-2xl border border-gray-700/50">
-                        <h3 class="text-sm font-black uppercase tracking-[0.2em] text-indigo-400 mb-6">Shipping Information</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase text-gray-500 ml-1">Full Name</label>
-                                <input type="text" name="name" required class="w-full px-5 py-3.5 bg-[#0f172a] border border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm text-white outline-none">
+                    <div class="bg-[#1e293b] rounded-3xl border border-gray-800 p-8 shadow-xl">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.3em] text-indigo-400 font-black">Shipping information</p>
+                                <h3 class="mt-4 text-xl font-black text-white">Customer details</h3>
                             </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase text-gray-500 ml-1">Email Address</label>
-                                <input type="email" name="email" required class="w-full px-5 py-3.5 bg-[#0f172a] border border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm text-white outline-none">
-                            </div>
-                            <div class="md:col-span-2 space-y-2">
-                                <label class="text-[10px] font-black uppercase text-gray-500 ml-1">Shipping Address</label>
-                                <textarea name="address" rows="3" required class="w-full px-5 py-3.5 bg-[#0f172a] border border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm text-white outline-none"></textarea>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase text-gray-500 ml-1">City</label>
-                                <input type="text" name="city" required class="w-full px-5 py-3.5 bg-[#0f172a] border border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm text-white outline-none">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black uppercase text-gray-500 ml-1">Phone Number</label>
-                                <input type="text" name="phone" required class="w-full px-5 py-3.5 bg-[#0f172a] border border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-bold text-sm text-white outline-none">
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Payment Method Card --}}
-                    <div class="bg-[#1e293b] p-8 rounded-3xl shadow-2xl border border-gray-700/50">
-                        <h3 class="text-sm font-black uppercase tracking-[0.2em] text-indigo-400 mb-6">Payment Method</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <label class="relative flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all border-indigo-500 bg-indigo-500/10" id="label-cod">
-                                <input type="radio" name="payment_method" value="cod" checked class="hidden" onchange="toggleOnlineOptions(false)">
-                                <span class="text-xs font-black uppercase text-indigo-400">Cash on Delivery</span>
-                            </label>
-
-                            <label class="relative flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all border-gray-700 bg-transparent hover:border-gray-500" id="label-online">
-                                <input type="radio" name="payment_method" value="online" class="hidden" onchange="toggleOnlineOptions(true)">
-                                <span class="text-xs font-black uppercase text-gray-500" id="text-online">Online Payment</span>
-                            </label>
+                            <span class="inline-flex items-center rounded-full bg-indigo-500/10 text-indigo-300 text-[10px] uppercase tracking-[0.3em] font-bold px-3 py-2">Required</span>
                         </div>
 
-                        {{-- Hidden Online Options --}}
-                        <div id="online-payment-options" class="hidden space-y-4 pt-4 border-t border-dashed border-gray-700 animate-fade-in-down">
-                            <p class="text-[10px] font-black uppercase text-gray-500 ml-1">Select Provider</p>
-                            <div class="grid grid-cols-3 gap-3">
-                                <label class="flex flex-col items-center p-3 border border-gray-700 rounded-xl hover:bg-indigo-500/10 cursor-pointer transition-all group">
-                                    <input type="radio" name="online_provider" value="gcash" class="mb-2 accent-indigo-500">
-                                    <span class="text-[10px] font-bold text-gray-400 group-hover:text-indigo-400">GCash</span>
-                                </label>
-                                <label class="flex flex-col items-center p-3 border border-gray-700 rounded-xl hover:bg-indigo-500/10 cursor-pointer transition-all group">
-                                    <input type="radio" name="online_provider" value="maya" class="mb-2 accent-indigo-500">
-                                    <span class="text-[10px] font-bold text-gray-400 group-hover:text-indigo-400">Maya</span>
-                                </label>
-                                <label class="flex flex-col items-center p-3 border border-gray-700 rounded-xl hover:bg-indigo-500/10 cursor-pointer transition-all group">
-                                    <input type="radio" name="online_provider" value="card" class="mb-2 accent-indigo-500">
-                                    <span class="text-[10px] font-bold text-gray-400 group-hover:text-indigo-400">Card</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <form action="{{ route('checkout.review') }}" method="POST" class="space-y-6 mt-8">
+                            @csrf
 
-                {{-- Right Side: Order Summary --}}
-                <div class="lg:col-span-5">
-                    <div class="bg-[#0f172a] rounded-3xl p-8 sticky top-8 text-white shadow-2xl border border-gray-800">
-                        <h3 class="text-sm font-black uppercase tracking-[0.2em] text-indigo-400 mb-8">Order Summary</h3>
-                        
-                        <div class="space-y-6 mb-8 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
-                            @foreach(session('cart') as $id => $details)
-                            <div class="flex items-center justify-between group">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-white/5 rounded-xl overflow-hidden flex-shrink-0 border border-gray-800">
-                                        <img src="{{ asset($details['image']) }}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold leading-tight text-gray-200">{{ $details['name'] }}</p>
-                                        <p class="text-[10px] text-gray-500">Qty: {{ $details['quantity'] }}</p>
-                                    </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Full Name</label>
+                                    <input type="text" name="name" required value="{{ old('name') }}" class="w-full rounded-3xl border border-gray-700 bg-[#0f172a] px-5 py-3 text-sm font-bold text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                                    @error('name')<p class="mt-2 text-xs text-rose-400">{{ $message }}</p>@enderror
                                 </div>
-                                <p class="text-sm font-black text-gray-200">₱{{ number_format($details['price'] * $details['quantity'], 2) }}</p>
+                                <div>
+                                    <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Email Address</label>
+                                    <input type="email" name="email" required value="{{ old('email') }}" class="w-full rounded-3xl border border-gray-700 bg-[#0f172a] px-5 py-3 text-sm font-bold text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                                    @error('email')<p class="mt-2 text-xs text-rose-400">{{ $message }}</p>@enderror
+                                </div>
                             </div>
-                            @endforeach
-                        </div>
 
-                        <div class="border-t border-gray-800 pt-6 space-y-4">
-                            <div class="flex justify-between text-gray-500">
-                                <span class="text-xs font-bold uppercase">Subtotal</span>
-                                <span class="font-bold">₱{{ number_format($total, 2) }}</span>
+                            <div>
+                                <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Shipping Address</label>
+                                <textarea name="address" rows="3" required class="w-full rounded-3xl border border-gray-700 bg-[#0f172a] px-5 py-3 text-sm font-bold text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">{{ old('address') }}</textarea>
+                                @error('address')<p class="mt-2 text-xs text-rose-400">{{ $message }}</p>@enderror
                             </div>
-                            <div class="flex justify-between text-gray-500">
-                                <span class="text-xs font-bold uppercase">Shipping</span>
-                                <span class="font-bold text-emerald-500">FREE</span>
-                            </div>
-                            <div class="flex justify-between items-end pt-4">
-                                <span class="text-sm font-black uppercase tracking-widest text-indigo-400">Total</span>
-                                <span class="text-3xl font-black text-white">₱{{ number_format($total, 2) }}</span>
-                            </div>
-                        </div>
 
-                        <button type="submit" class="w-full mt-10 bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all transform active:scale-95 shadow-xl shadow-indigo-500/20">
-                            Place My Order
-                        </button>
-                        
-                        <a href="{{ route('cart.index') }}" class="block text-center mt-6 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-gray-400 transition-colors">
-                            Go back to cart
-                        </a>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">City</label>
+                                    <input type="text" name="city" required value="{{ old('city') }}" class="w-full rounded-3xl border border-gray-700 bg-[#0f172a] px-5 py-3 text-sm font-bold text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                                    @error('city')<p class="mt-2 text-xs text-rose-400">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Phone Number</label>
+                                    <input type="text" name="phone" required value="{{ old('phone') }}" class="w-full rounded-3xl border border-gray-700 bg-[#0f172a] px-5 py-3 text-sm font-bold text-white outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                                    @error('phone')<p class="mt-2 text-xs text-rose-400">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+
+                            <div class="rounded-3xl border border-gray-700 bg-[#111827] p-6">
+                                <p class="text-[11px] uppercase tracking-[0.3em] text-gray-500 mb-4">Payment method</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label class="cursor-pointer rounded-3xl border border-gray-700 bg-white/5 p-4 transition hover:border-indigo-500">
+                                        <input type="radio" name="payment_method" value="cod" checked class="sr-only" onchange="toggleOnlineOptions(false)">
+                                        <div class="flex items-center justify-between gap-4">
+                                            <div>
+                                                <p class="text-sm font-black text-white">Cash on Delivery</p>
+                                                <p class="text-xs text-gray-400 mt-1">Pay when you receive your order.</p>
+                                            </div>
+                                            <span class="inline-flex items-center rounded-full bg-indigo-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-indigo-300">Fast</span>
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer rounded-3xl border border-gray-700 bg-white/5 p-4 transition hover:border-indigo-500">
+                                        <input type="radio" name="payment_method" value="online" class="sr-only" onchange="toggleOnlineOptions(true)">
+                                        <div class="flex items-center justify-between gap-4">
+                                            <div>
+                                                <p class="text-sm font-black text-white">Online Payment</p>
+                                                <p class="text-xs text-gray-400 mt-1">Choose GCash, Maya, or Card.</p>
+                                            </div>
+                                            <span class="inline-flex items-center rounded-full bg-indigo-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-indigo-300">Secure</span>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div id="online-payment-options" class="mt-6 hidden rounded-3xl border border-gray-700 bg-[#0f172a] p-4">
+                                    <p class="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-4">Choose provider</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <label class="provider-option relative cursor-pointer rounded-3xl border border-gray-700 bg-white/5 p-4 text-center text-sm text-gray-300 transition hover:border-indigo-500 hover:text-indigo-100">
+                                            <input id="provider-gcash" type="radio" name="online_provider" value="gcash" class="provider-radio sr-only" />
+                                            <div class="font-black uppercase tracking-[0.2em] text-indigo-300">GCash</div>
+                                            <div class="text-[10px] text-gray-400 mt-2">Scan QR or use app transfer.</div>
+                                            <span class="option-marker absolute right-4 top-4 h-4 w-4 rounded-full border border-gray-500"></span>
+                                        </label>
+                                        <label class="provider-option relative cursor-pointer rounded-3xl border border-gray-700 bg-white/5 p-4 text-center text-sm text-gray-300 transition hover:border-indigo-500 hover:text-indigo-100">
+                                            <input id="provider-maya" type="radio" name="online_provider" value="maya" class="provider-radio sr-only" />
+                                            <div class="font-black uppercase tracking-[0.2em] text-indigo-300">Maya</div>
+                                            <div class="text-[10px] text-gray-400 mt-2">Pay with your Maya wallet.</div>
+                                            <span class="option-marker absolute right-4 top-4 h-4 w-4 rounded-full border border-gray-500"></span>
+                                        </label>
+                                        <label class="provider-option relative cursor-pointer rounded-3xl border border-gray-700 bg-white/5 p-4 text-center text-sm text-gray-300 transition hover:border-indigo-500 hover:text-indigo-100">
+                                            <input id="provider-card" type="radio" name="online_provider" value="card" class="provider-radio sr-only" />
+                                            <div class="font-black uppercase tracking-[0.2em] text-indigo-300">Card</div>
+                                            <div class="text-[10px] text-gray-400 mt-2">Use Visa, Mastercard, or JCB.</div>
+                                            <span class="option-marker absolute right-4 top-4 h-4 w-4 rounded-full border border-gray-500"></span>
+                                        </label>
+                                    </div>
+                                    <p class="mt-4 text-[10px] uppercase tracking-[0.3em] text-gray-500">You can switch back to cash if you prefer payment on delivery.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div class="rounded-3xl border border-gray-700 bg-white/5 p-4 text-sm text-gray-300">
+                                    <p class="font-black uppercase tracking-[0.3em] text-gray-400">Need help?</p>
+                                    <p class="mt-2 text-xs">We’ll guide you through order review and confirmation.</p>
+                                </div>
+                                <button type="submit" class="inline-flex items-center justify-center rounded-3xl bg-indigo-600 px-6 py-4 text-sm font-black uppercase tracking-[0.2em] text-white transition hover:bg-indigo-500">Review Order</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+
+                <div class="lg:col-span-5">
+                    <div class="space-y-6">
+                        <div class="rounded-3xl border border-gray-800 bg-[#0f172a] p-8 shadow-xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] uppercase tracking-[0.3em] text-indigo-400 font-black">Order summary</p>
+                                    <h3 class="mt-3 text-xl font-black text-white">Review before next step</h3>
+                                </div>
+                                <span class="rounded-full bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-gray-400">{{ count(session('cart', [])) }} items</span>
+                            </div>
+
+                            <div class="mt-8 space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                                @foreach(session('cart') as $id => $details)
+                                    <div class="flex items-center justify-between gap-3 rounded-3xl border border-gray-800 bg-white/5 p-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-16 w-16 overflow-hidden rounded-3xl bg-[#111827] border border-gray-700">
+                                                <img src="{{ asset($details['image']) }}" class="h-full w-full object-cover" alt="{{ $details['name'] }}">
+                                            </div>
+                                            <div>
+                                                <p class="font-black text-white">{{ $details['name'] }}</p>
+                                                <p class="text-xs text-gray-400">Qty {{ $details['quantity'] }}</p>
+                                            </div>
+                                        </div>
+                                        <p class="font-black text-white">₱{{ number_format($details['price'] * $details['quantity'], 2) }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="mt-6 space-y-3 border-t border-gray-800 pt-5 text-sm text-gray-300">
+                                <div class="flex justify-between">
+                                    <span>Subtotal</span>
+                                    <span>₱{{ number_format($total, 2) }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Shipping</span>
+                                    <span class="text-emerald-400">FREE</span>
+                                </div>
+                                <div class="flex justify-between font-black text-white text-lg">
+                                    <span>Total</span>
+                                    <span>₱{{ number_format($total, 2) }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rounded-3xl border border-gray-800 bg-[#111827] p-8 shadow-xl">
+                            <p class="text-[11px] uppercase tracking-[0.3em] text-indigo-400 font-black mb-4">Checkout confidence</p>
+                            <div class="grid gap-4 text-sm text-gray-300">
+                                <div class="flex items-center gap-3 rounded-3xl border border-gray-700 bg-[#0f172a] p-4">
+                                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-300">✓</span>
+                                    <p>Secure checkout backed by trusted payment options.</p>
+                                </div>
+                                <div class="flex items-center gap-3 rounded-3xl border border-gray-700 bg-[#0f172a] p-4">
+                                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-300">✓</span>
+                                    <p>Track your order from payment to delivery.</p>
+                                </div>
+                                <div class="flex items-center gap-3 rounded-3xl border border-gray-700 bg-[#0f172a] p-4">
+                                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-300">✓</span>
+                                    <p>Easy support if you need help with your order.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    {{-- Dark Mode Toggling Logic --}}
     <script>
         function toggleOnlineOptions(show) {
             const onlineOptions = document.getElementById('online-payment-options');
-            const labelCod = document.getElementById('label-cod');
-            const labelOnline = document.getElementById('label-online');
-            const textOnline = document.getElementById('text-online');
+            const providerRadios = document.querySelectorAll('input[name="online_provider"]');
 
             if (show) {
                 onlineOptions.classList.remove('hidden');
-                labelOnline.classList.replace('border-gray-700', 'border-indigo-500');
-                labelOnline.classList.add('bg-indigo-500/10');
-                textOnline.classList.replace('text-gray-500', 'text-indigo-400');
-                
-                labelCod.classList.replace('border-indigo-500', 'border-gray-700');
-                labelCod.classList.remove('bg-indigo-500/10');
-                labelCod.querySelector('span').classList.replace('text-indigo-400', 'text-gray-500');
+                providerRadios.forEach(function (radio) {
+                    radio.required = true;
+                });
             } else {
                 onlineOptions.classList.add('hidden');
-                labelCod.classList.replace('border-gray-700', 'border-indigo-500');
-                labelCod.classList.add('bg-indigo-500/10');
-                labelCod.querySelector('span').classList.replace('text-gray-500', 'text-indigo-400');
-
-                labelOnline.classList.replace('border-indigo-500', 'border-gray-700');
-                labelOnline.classList.remove('bg-indigo-500/10');
-                textOnline.classList.replace('text-indigo-400', 'text-gray-500');
+                providerRadios.forEach(function (radio) {
+                    radio.required = false;
+                });
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const options = document.querySelectorAll('.provider-option');
+            options.forEach(function (option) {
+                option.addEventListener('click', function () {
+                    const input = this.querySelector('.provider-radio');
+                    if (input) {
+                        input.checked = true;
+                        options.forEach(function (other) {
+                            other.classList.remove('border-indigo-500', 'bg-indigo-500/10', 'text-white');
+                        });
+                        this.classList.add('border-indigo-500', 'bg-indigo-500/10', 'text-white');
+                    }
+                });
+            });
+        });
     </script>
 
     <style>
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-down {
-            animation: fadeInDown 0.3s ease-out forwards;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        /* Overriding some default input styles for dark mode browsers */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus {
-            -webkit-text-fill-color: white;
-            -webkit-box-shadow: 0 0 0px 1000px #0f172a inset;
-            transition: background-color 5000s ease-in-out 0s;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
     </style>
 </x-app-layout>

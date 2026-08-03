@@ -51,9 +51,14 @@ Route::get('/wishlist/move-to-cart/{product}', [WishlistController::class, 'move
 
 // The page where they see the checkout form
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-
-// The action when they click "Place My Order"
+Route::post('/checkout/review', [CheckoutController::class, 'review'])->name('checkout.review');
+Route::get('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
 Route::post('/checkout/place', [CheckoutController::class, 'placeOrder'])->name('order.place');
+Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/orders', [CheckoutController::class, 'history'])->name('orders.index');
+});
 
 /*
 |--------------------------------------------------------------------------

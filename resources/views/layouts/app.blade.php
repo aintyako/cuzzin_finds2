@@ -15,7 +15,9 @@
     <body class="font-sans antialiased">
         {{-- Changed min-h-screen background to the deep slate #0f172a --}}
         <div class="min-h-screen bg-[#0f172a]">
-            @include('layouts.navigation')
+            @unless($hideNav ?? false)
+                @include('layouts.navigation')
+            @endunless
 
             @isset($header)
                 {{-- Updated Header: Darker background with gray-800 border --}}

@@ -1,6 +1,6 @@
-<x-app-layout>
+<x-app-layout :hide-nav="true">
     <div class="relative min-h-screen w-full bg-[#0b0e1a] overflow-hidden text-white flex flex-col items-center justify-center py-16 px-6">
-
+        
         {{-- Route-map background --}}
         <img src="{{ asset('build/images/home.png') }}" 
              class="absolute inset-0 w-full h-full object-cover">
@@ -38,5 +38,40 @@
         <a href="{{ route('shop.catalog') }}" class="relative z-10 mt-10 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-md font-bold transition shadow-2xl">
             Start Shopping
         </a>
+
+        {{-- Trust badges --}}
+        <div class="relative z-10 mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl w-full text-center">
+            <div class="bg-white/5 border border-white/10 rounded-3xl py-5 px-6 backdrop-blur-sm">
+                <p class="text-2xl font-black text-[#d4af37]">Trust</p>
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mt-2">Secure checkout</p>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-3xl py-5 px-6 backdrop-blur-sm">
+                <p class="text-2xl font-black text-[#d4af37]">Fast</p>
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mt-2">Free shipping over ₱1,500</p>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-3xl py-5 px-6 backdrop-blur-sm">
+                <p class="text-2xl font-black text-[#d4af37]">Loved</p>
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mt-2">1,000+ happy shoppers</p>
+            </div>
+        </div>
+
+        {{-- Featured categories --}}
+        <div class="relative z-10 mt-14 w-full max-w-6xl grid gap-5 sm:grid-cols-3">
+            <a href="{{ route('product.clothes') }}" class="group block rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:border-indigo-500/40 hover:bg-indigo-500/5">
+                <p class="text-sm uppercase tracking-[0.3em] text-gray-500">Featured</p>
+                <h3 class="mt-4 text-xl font-black text-white">Clothes</h3>
+                <p class="mt-3 text-sm text-gray-400">Streetwear, cozy fits, and curated fashion from across Asia.</p>
+            </a>
+            <a href="{{ route('product.skincare') }}" class="group block rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:border-indigo-500/40 hover:bg-indigo-500/5">
+                <p class="text-sm uppercase tracking-[0.3em] text-gray-500">Featured</p>
+                <h3 class="mt-4 text-xl font-black text-white">Skincare</h3>
+                <p class="mt-3 text-sm text-gray-400">K-beauty essentials, glossy skin care, and glow-ready routines.</p>
+            </a>
+            <a href="{{ route('wishlist.index') }}" class="group block rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:border-indigo-500/40 hover:bg-indigo-500/5">
+                <p class="text-sm uppercase tracking-[0.3em] text-gray-500">Must-check</p>
+                <h3 class="mt-4 text-xl font-black text-white">Wishlist</h3>
+                <p class="mt-3 text-sm text-gray-400">Save your favorite finds and revisit them whenever you’re ready.</p>
+            </a>
+        </div>
     </div>
 </x-app-layout>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class CartController extends Controller
 {
@@ -30,6 +31,10 @@ class CartController extends Controller
     public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
+
+        if ($product->is_sold_out || (Schema::hasColumn('products', 'quantity') && $product->quantity <= 0) || (Schema::hasColumn('products', 'stock') && $product->stock <= 0)) {
+            return redirect()->back()->with('error', 'This product is sold out and cannot be added to the cart.');
+        }
         
         // Check if a specific image was passed from the gallery modal
         // If not, fall back to the default image_url
@@ -47,6 +52,7 @@ class CartController extends Controller
         } else {
             // Add new specific item to cart array
             $cart[$cartKey] = [
+                "product_id" => $product->id,
                 "name" => $product->name,
                 "quantity" => 1,
                 "price" => $product->price,
